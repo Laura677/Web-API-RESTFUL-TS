@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Painel Administrador - CRUD Estudantes</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f0f2f5;
+        margin: 0;
+        padding: 0;
+    }
+
+    header {
+        background: #4a69bd;
+        color: white;
+        padding: 20px;
+        text-align: center;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .container {
+        width: 90%;
+        max-width: 900px;
+        margin: 40px auto;
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+        margin-top: 0;
+        color: #333;
+    }
+
+    label {
+        font-weight: bold;
+        display: block;
+        margin-top: 10px;
+    }
+
+    input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+    }
+
+    button {
+        background: #4a69bd;
+        border: none;
+        color: white;
+        padding: 12px 18px;
+        margin-top: 15px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: .3s;
+    }
+
+    button:hover {
+        background: #1e3799;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 25px;
+    }
+
+    th, td {
+        padding: 10px;
+        text-align: center;
+        border-bottom: 1px solid #ccc;
+    }
+
+    th {
+        background: #4a69bd;
+        color: white;
+    }
+
+    .btn-delete {
+        background: #eb2f06;
+    }
+
+    .btn-delete:hover {
+        background: #c23616;
+    }
+</style>
+</head>
+
+<body>
+<header> Painel de Administração - CRUD Estudantes </header>
+
+<div class="container">
+    <h2>Gerenciar Usuários</h2>
+
+    <label>ID</label>
+    <input type="number" id="id">
+
+    <label>Nome</label>
+    <input type="text" id="nome">
+
+    <label>Email</label>
+    <input type="email" id="email">
+
+    <button onclick="listar()">Listar Todos</button>
+    <button onclick="buscar()">Buscar por ID</button>
+    <button onclick="inserir()">Inserir</button>
+    <button onclick="atualizar()">Atualizar</button>
+    <button class="btn-delete" onclick="deletar()">Excluir</button>
+
+    <table id="tabela">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+const API = "http://localhost:3000/usuarios";
+
+async function listar() {
+    const res = await fetch(API);
+    const data = await res.json();
+    atualizarTabela(data);
+}
+
+async function buscar() {
+    let id = document.getElementById("id").value;
+    if (!id) return alert("Informe o ID!");
+
+    const res = await fetch(`${API}/${id}`);
+    const data = await res.json();
+
+    atualizarTabela(Array.isArray(data) ? data : [data]);
+}
+
+async function inserir() {
+    let nome = document.getElementById("nome").value;
+    let email = document.getElementById("email").value;
+
+    if (!nome || !email) return alert("Preencha nome e email!");
+
+    await fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nome, email })
+    });
+
+    alert("Usuário inserido!");
+    listar();
+}
+
+async function atualizar() {
+    let id = document.getElementById("id").value;
+    let nome = document.getElementById("nome").value;
+    let email = document.getElementById("email").value;
+
+    if (!id) return alert("Coloque o ID!");
+
+    await fetch(API, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, nome, email })
+    });
+
+    alert("Usuário atualizado!");
+    listar();
+}
+
+async function deletar() {
+    let id = document.getElementById("id").value;
+    if (!id) return alert("Informe o ID!");
+
+    await fetch(`${API}/${id}`, { method: "DELETE" });
+
+    alert("Usuário deletado!");
+    listar();
+}
+
+function atualizarTabela(lista) {
+    let tbody = document.querySelector("#tabela tbody");
+    tbody.innerHTML = "";
+
+    lista.forEach(item => {
+        let tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${item.id}</td>
+            <td>${item.nome}</td>
+            <td>${item.email ?? ''}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+</script>
+
+</body>
+</html>
