@@ -1,9 +1,13 @@
-📌 API RESTFUL
-API REST backend com banco de dados MySQL
+#📌 API RESTFUL
+API REST backend com banco de dados MySQL com TypeScript e React.
 
 Este projeto é um exemplo de rota com Express, utilizando Node.js e MySQL para demonstrar a criação de uma API simples.
 
-🚀 Tecnologias utilizadas:
+#🚀 Tecnologias utilizadas:
+
+Typescript
+
+React
 
 Node.js
 
@@ -21,7 +25,7 @@ Promise
 
 URL
 
-⚙️ Funcionalidades:
+#⚙️ Funcionalidades:
 
 A API implementa as quatro operações básicas do CRUD:
 
